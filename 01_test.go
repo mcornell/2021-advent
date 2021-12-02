@@ -23,3 +23,10 @@ func TestParseInput(t *testing.T) {
 	assert.Equal(t, 10, len(parsed))
 	assert.Equal(t, "260", parsed[8])
 }
+
+func TestCountInc(t *testing.T) {
+
+	parsed := ParseInput(test_input_01)
+	count := CountIncrease(parsed)
+	assert.Equal(t, 7, count)
+}
