@@ -30,3 +30,9 @@ func TestCountInc(t *testing.T) {
 	count := CountIncrease(parsed)
 	assert.Equal(t, 7, count)
 }
+
+func TestCountSlidingWindow(t *testing.T) {
+	parsed := ParseInput(test_input_01)
+	count := CountIncreaseSlidingWindow(parsed)
+	assert.Equal(t, 5, count)
+}

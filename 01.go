@@ -2028,10 +2028,33 @@ func CountIncrease(measurements []string) int {
 	return count
 }
 
+func CountIncreaseSlidingWindow(measurements []string) int {
+	count := 0
+	current := 0
+	now, _ := strconv.Atoi(measurements[0])
+	later, _ := strconv.Atoi(measurements[1])
+	last, _ := strconv.Atoi(measurements[2])
+	current = now + later + last
+
+	for i := 1; i < (len(measurements) - 2); i++ {
+		now, _ = strconv.Atoi(measurements[i])
+		later, _ = strconv.Atoi(measurements[i+1])
+		last, _ = strconv.Atoi(measurements[i+2])
+		next := now + later + last
+		if next > current {
+			count++
+		}
+		current = next
+	}
+	return count
+}
+
 func main() {
 	fmt.Println("ho ho ho")
 	parsed := ParseInput(puzzle_input_01)
 	count := CountIncrease(parsed)
+	fmt.Println(count)
+	count = CountIncreaseSlidingWindow(parsed)
 	fmt.Println(count)
 
 }
