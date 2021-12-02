@@ -33,6 +33,21 @@ func ProcessInstruction(instruction string, x_position int, y_position int) (int
 
 }
 
+func ProcessInstructionTwo(instruction string, x_position int, y_position int, aim_position int) (int, int, int) {
+	move := strings.Split(instruction, " ")
+	amount, _ := strconv.Atoi(move[1])
+	if move[0] == "forward" {
+		x_position += amount
+		y_position += amount * aim_position
+	} else if move[0] == "down" {
+		aim_position += amount
+	} else {
+		aim_position -= amount
+	}
+	return x_position, y_position, aim_position
+
+}
+
 func ProcessCourse(path string) (int, int) {
 	instructions := ReadFile(path)
 	x := 0
@@ -44,9 +59,14 @@ func ProcessCourse(path string) (int, int) {
 	return x, y
 }
 
-// func main() {
-// 	fmt.Println("ho ho ho")
-// 	x, y := ProcessCourse("./02_puzzle.txt")
-// 	fmt.Println(x * y)
-
-// }
+func ProcessCourseTwo(path string) (int, int, int) {
+	instructions := ReadFile(path)
+	x := 0
+	y := 0
+	aim := 0
+	for _, instruction := range instructions {
+		x, y, aim = ProcessInstructionTwo(instruction, x, y, aim)
+		fmt.Println(fmt.Sprint(x, y, aim))
+	}
+	return x, y, aim
+}
