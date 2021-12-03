@@ -1,7 +1,6 @@
 package advent01
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 )
@@ -2017,11 +2016,8 @@ func CountIncrease(measurements []string) int {
 	for _, measurement := range measurements[1:] {
 		next, _ := strconv.Atoi(measurement)
 
-		fmt.Println(fmt.Sprint("Current:", current))
-		fmt.Println(fmt.Sprint("Next:", next))
 		if next > current {
 			count++
-			fmt.Println(fmt.Sprint("Count:", count))
 		}
 		current = next
 	}
@@ -2048,13 +2044,3 @@ func CountIncreaseSlidingWindow(measurements []string) int {
 	}
 	return count
 }
-
-// func main() {
-// 	fmt.Println("ho ho ho")
-// 	parsed := ParseInput(puzzle_input_01)
-// 	count := CountIncrease(parsed)
-// 	fmt.Println(count)
-// 	count = CountIncreaseSlidingWindow(parsed)
-// 	fmt.Println(count)
-
-// }

@@ -2,7 +2,6 @@ package advent02
 
 import (
 	"2021-advent/util"
-	"fmt"
 	"strconv"
 	"strings"
 )
@@ -42,7 +41,6 @@ func ProcessCourse(path string) (int, int) {
 	y := 0
 	for _, instruction := range instructions {
 		x, y = ProcessInstruction(instruction, x, y)
-		fmt.Println(fmt.Sprint(x, y))
 	}
 	return x, y
 }
@@ -54,7 +52,6 @@ func ProcessCourseTwo(path string) (int, int, int) {
 	aim := 0
 	for _, instruction := range instructions {
 		x, y, aim = ProcessInstructionTwo(instruction, x, y, aim)
-		fmt.Println(fmt.Sprint(x, y, aim))
 	}
 	return x, y, aim
 }
