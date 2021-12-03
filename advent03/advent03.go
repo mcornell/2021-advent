@@ -15,4 +15,5 @@ func RunPuzzle() {
 	fmt.Println(puzzlePath)
 	report := util.ReadFile(puzzlePath)
 	fmt.Println(FindValue(report))
+	fmt.Println(FindOxyCO2Values(report))
 }
