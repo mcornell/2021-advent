@@ -1,23 +1,11 @@
 package advent02
 
 import (
+	"2021-advent/util"
 	"fmt"
-	"io/ioutil"
 	"strconv"
 	"strings"
 )
-
-func ReadFile(path string) []string {
-	b, err := ioutil.ReadFile(path)
-	if err != nil {
-		fmt.Print(err)
-	}
-
-	str := string(b)
-
-	return strings.Split(str, "\n")
-
-}
 
 func ProcessInstruction(instruction string, x_position int, y_position int) (int, int) {
 	move := strings.Split(instruction, " ")
@@ -49,7 +37,7 @@ func ProcessInstructionTwo(instruction string, x_position int, y_position int, a
 }
 
 func ProcessCourse(path string) (int, int) {
-	instructions := ReadFile(path)
+	instructions := util.ReadFile(path)
 	x := 0
 	y := 0
 	for _, instruction := range instructions {
@@ -60,7 +48,7 @@ func ProcessCourse(path string) (int, int) {
 }
 
 func ProcessCourseTwo(path string) (int, int, int) {
-	instructions := ReadFile(path)
+	instructions := util.ReadFile(path)
 	x := 0
 	y := 0
 	aim := 0

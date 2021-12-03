@@ -7,13 +7,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestReadFile(t *testing.T) {
-
-	parsed := ReadFile("./02_test_input.txt")
-	assert.Equal(t, "up 3", parsed[3])
-
-}
-
 func TestProcessInstruction(t *testing.T) {
 	x, y := ProcessInstruction("forward 8", 5, 5)
 	assert.Equal(t, 13, x)
