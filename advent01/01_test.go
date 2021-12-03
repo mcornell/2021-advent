@@ -1,4 +1,4 @@
-package main
+package advent01
 
 import (
 	"testing"

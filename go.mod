@@ -1,4 +1,4 @@
-module 01
+module 2021-advent
 
 go 1.17
 
