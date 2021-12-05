@@ -1,12 +1,14 @@
 package advent04
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 )
 
 type Card struct {
 	Numbers [][]int
+	Winner  bool
 }
 
 func (c *Card) MarkNumber(number int) {
@@ -61,8 +63,21 @@ func (c *Card) CheckColumns() bool {
 	return retVal
 }
 
+func (c *Card) CalculateScore(drawn int) int {
+	total := 0
+	for _, row := range c.Numbers {
+		for _, col := range row {
+			if col > -1 {
+				total += col
+			}
+		}
+	}
+	return total * drawn
+}
+
 func NewCard(lines []string, lineIndex int) *Card {
 	cardPointer := new(Card)
+	cardPointer.Winner = false
 
 	// fmt.Printf("Lines Index: %#v\n", lines[lineIndex:lineIndex+5])
 
@@ -82,8 +97,8 @@ func NewCard(lines []string, lineIndex int) *Card {
 	return cardPointer
 }
 
-func ParseInput(report []string) ([]int, []Card) {
-	stringNumbers := strings.Split(report[0], ",")
+func ParseInput(game_input []string) ([]int, []Card) {
+	stringNumbers := strings.Split(game_input[0], ",")
 	var numbers []int
 	for _, num := range stringNumbers {
 		val, _ := strconv.Atoi(num)
@@ -91,19 +106,84 @@ func ParseInput(report []string) ([]int, []Card) {
 	}
 	// println("cards")
 	cards := []Card{}
-	for lineNum := 2; lineNum < len(report); lineNum += 6 {
+	for lineNum := 2; lineNum < len(game_input); lineNum += 6 {
 		// fmt.Printf("line num: %v\n", lineNum)
-		cards = append(cards, *NewCard(report, lineNum))
+		cards = append(cards, *NewCard(game_input, lineNum))
 		// fmt.Printf("Card! %v\n\n", cards[len(cards)-1])
 	}
 	// println("cards!")
 	return numbers, cards
 }
 
-func DrawNumber(numbers []int, cards []Card) ([]int, []Card) {
+func DrawNumber(numbers []int, cards []Card) (int, []int, []Card) {
 	num := numbers[0]
 	for _, card := range cards {
 		card.MarkNumber(num)
 	}
-	return numbers[1:], cards
+	return num, numbers[1:], cards
+}
+
+func IsWinner(cards []Card) int {
+	win_index := -1
+	for idx, card := range cards {
+		if !card.Winner && card.CheckWinner() {
+			win_index = idx
+			cards[idx].Winner = true
+			break
+		}
+	}
+	return win_index
+}
+
+func FlagWinner(cards []Card) int {
+	retval := -1
+	for idx, card := range cards {
+		if !card.Winner && card.CheckWinner() {
+			cards[idx].Winner = true
+			retval = idx
+		}
+	}
+	return retval
+}
+
+func RunGame(game []string) (int, int) {
+	numbers, cards := ParseInput(game)
+	var drawn = -2
+	var winner = -1
+	for {
+		drawn, numbers, cards = DrawNumber(numbers, cards)
+		winner = IsWinner(cards)
+		if winner > -1 {
+			break
+		}
+	}
+	return winner, cards[winner].CalculateScore(drawn)
+}
+
+func FindLoser(game []string) (int, int) {
+	numbers, cards := ParseInput(game)
+	drawn := -2
+	winner := -1
+	for {
+		drawn, numbers, cards = DrawNumber(numbers, cards)
+		fmt.Printf("Drawn: %d\n", drawn)
+		winner = FlagWinner(cards)
+		if winner > -1 {
+			fmt.Printf("winner found\n")
+			all_wins := true
+			losers := []int{}
+			for idx, card := range cards {
+				if !card.Winner {
+					all_wins = false
+					losers = append(losers, idx)
+				}
+			}
+			fmt.Printf("losers: %v\n", losers)
+			if all_wins {
+				break
+			}
+		}
+	}
+
+	return winner, cards[winner].CalculateScore(drawn)
 }
