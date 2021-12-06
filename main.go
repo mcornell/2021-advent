@@ -6,14 +6,19 @@ import (
 	"2021-advent/advent03"
 	"2021-advent/advent04"
 	"2021-advent/advent05"
+	"2021-advent/advent06"
 	"fmt"
 )
 
 func main() {
+	// Create a large heap allocation of 1 GiB
+	ballast := make([]byte, 1<<30)
 	fmt.Println("ho ho ho")
 	advent01.RunPuzzle()
 	advent02.RunPuzzle()
 	advent03.RunPuzzle()
 	advent04.RunPuzzle()
 	advent05.RunPuzzle()
+	advent06.RunPuzzle()
+	fmt.Printf("ballast: %v\n", ballast)
 }
