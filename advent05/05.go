@@ -1,7 +1,6 @@
 package advent05
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 )
@@ -66,7 +65,6 @@ func (grid *VentGrid) ProcessLineAll(line string) {
 	points := strings.Split(line, " -> ")
 	start := NewCoordinates(points[0])
 	end := NewCoordinates(points[1])
-	fmt.Printf("Start: %v,%v End %v,%v\n", start.X, start.Y, end.X, end.Y)
 
 	xIncrement := true
 	yIncrement := true
