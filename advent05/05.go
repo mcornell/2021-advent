@@ -29,11 +29,10 @@ func NewCoordinates(text string) *Coordinates {
 	return coords
 }
 
-func (grid *VentGrid) ProcessLine(line string) {
+func (grid *VentGrid) ProcessLineStraight(line string) {
 	points := strings.Split(line, " -> ")
 	start := NewCoordinates(points[0])
 	end := NewCoordinates(points[1])
-	fmt.Printf("Start: %v End %v\n", start, end)
 	var from = 0
 	var to = 0
 	if start.X == end.X {
@@ -63,9 +62,58 @@ func (grid *VentGrid) ProcessLine(line string) {
 
 }
 
-func (grid *VentGrid) ProcessVents(lines []string) {
+func (grid *VentGrid) ProcessLineAll(line string) {
+	points := strings.Split(line, " -> ")
+	start := NewCoordinates(points[0])
+	end := NewCoordinates(points[1])
+	fmt.Printf("Start: %v,%v End %v,%v\n", start.X, start.Y, end.X, end.Y)
+
+	xIncrement := true
+	yIncrement := true
+	xStable := false
+	yStable := false
+	if start.X == end.X {
+		xStable = true
+		xIncrement = false
+	} else if start.X > end.X {
+		xIncrement = false
+	}
+	if start.Y == end.Y {
+		yStable = true
+		yIncrement = false
+	} else if start.Y > end.Y {
+		yIncrement = false
+	}
+	x := start.X
+	y := start.Y
+	for {
+		grid.Intensity[x][y] += 1
+		if x == end.X && y == end.Y {
+			break
+		}
+		if xIncrement {
+			x++
+		} else if !xStable {
+			x--
+		}
+		if yIncrement {
+			y++
+		} else if !yStable {
+			y--
+		}
+	}
+
+}
+
+func (grid *VentGrid) ProcessVentsStraight(lines []string) {
 	for _, line := range lines {
-		grid.ProcessLine(line)
+		grid.ProcessLineStraight(line)
+	}
+}
+
+func (grid *VentGrid) ProcessVentsAll(lines []string) {
+	for _, line := range lines {
+		grid.ProcessLineAll(line)
 	}
 }
 

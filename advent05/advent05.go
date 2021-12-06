@@ -15,6 +15,10 @@ func RunPuzzle() {
 	fmt.Println(puzzlePath)
 	vents := util.ReadFile(puzzlePath)
 	grid := NewVentGrid()
-	grid.ProcessVents(vents)
-	fmt.Printf("Avoid Total: %d", grid.AvoidTotal())
+	grid.ProcessVentsStraight(vents)
+	fmt.Printf("Avoid Total: %d\n\n", grid.AvoidTotal())
+	grid2 := NewVentGrid()
+	grid2.ProcessVentsAll(vents)
+	fmt.Printf("Avoid Total: %d\n\n", grid2.AvoidTotal())
+
 }
