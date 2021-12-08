@@ -1,6 +1,9 @@
 package advent08
 
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
 type Signal struct {
 	Patterns []string
@@ -24,21 +27,22 @@ func ParseInput(data []string) []Signal {
 	return signals
 }
 
-func FindConstantNumbers(signal Signal) (string, string, string, string) {
-	one := ""
-	four := ""
-	seven := ""
-	eight := ""
+func FindConstantNumbers(signal Signal) []string {
+	constants := []string{}
+
 	for _, code := range signal.Output {
-		if len(code) == 2 {
-			one = code
-		} else if len(code) == 3 {
-			seven = code
-		} else if len(code) == 4 {
-			four = code
-		} else if len(code) == 8 {
-			eight = code
+		if len(code) == 2 || len(code) == 3 || len(code) == 4 || len(code) == 7 {
+			constants = append(constants, code)
 		}
 	}
-	return one, four, seven, eight
+	return constants
+}
+
+func FindAllConstantsInInput(signals []Signal) []string {
+	constants := []string{}
+	for _, signal := range signals {
+		constants = append(constants, FindConstantNumbers(signal)...)
+		fmt.Println(constants)
+	}
+	return constants
 }
