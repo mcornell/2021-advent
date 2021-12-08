@@ -20,6 +20,7 @@ func NewSignal(pattern_string string, output_string string) *Signal {
 func ParseInput(data []string) []Signal {
 	signals := []Signal{}
 	for _, line := range data {
+		fmt.Println(line)
 		line_split := strings.Split(line, "|")
 		signals = append(signals, *NewSignal(line_split[0], line_split[1]))
 
