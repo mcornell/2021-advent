@@ -23,3 +23,22 @@ func ParseInput(data []string) []Signal {
 	}
 	return signals
 }
+
+func FindConstantNumbers(signal Signal) (string, string, string, string) {
+	one := ""
+	four := ""
+	seven := ""
+	eight := ""
+	for _, code := range signal.Output {
+		if len(code) == 2 {
+			one = code
+		} else if len(code) == 3 {
+			seven = code
+		} else if len(code) == 4 {
+			four = code
+		} else if len(code) == 8 {
+			eight = code
+		}
+	}
+	return one, four, seven, eight
+}

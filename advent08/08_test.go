@@ -24,3 +24,13 @@ func TestLoadPuzzle(t *testing.T) {
 	assert.Equal(t, 10, len(signals[2].Patterns))
 	assert.Equal(t, 4, len(signals[2].Output))
 }
+
+func TestFindConstantNumbers(t *testing.T) {
+	data := util.ReadFile("./08_test_input.txt")
+	signals := ParseInput(data)
+	one, four, seven, eight := FindConstantNumbers(signals[0])
+	assert.Equal(t, "", one)
+	assert.Equal(t, "", seven)
+	assert.Equal(t, "gcbe", four)
+	assert.Equal(t, "", eight)
+}
