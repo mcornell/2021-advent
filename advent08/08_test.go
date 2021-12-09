@@ -25,12 +25,33 @@ func TestLoadPuzzle(t *testing.T) {
 	assert.Equal(t, 4, len(signals[2].Output))
 }
 
-func TestFindConstantNumbers(t *testing.T) {
+func TestFindAllConstantsInLine(t *testing.T) {
 	data := util.ReadFile("./08_test_input.txt")
 	signals := ParseInput(data)
-	constants := FindConstantNumbers(signals[0])
+	constants := FindAllConstantsInLine(signals[0])
 	assert.Equal(t, "gcbe", constants[1])
 	assert.Equal(t, "fdgacbe", constants[0])
+}
+
+func TestFindKnownNumbersInLine(t *testing.T) {
+	data := util.ReadFile("./08_test_input.txt")
+	signals := ParseInput(data)
+	constants, remainder := FindKnownNumbersInLine(signals[1])
+	assert.Equal(t, "bceg", constants[4])
+	assert.Equal(t, "abcdefg", constants[8])
+	assert.Equal(t, 6, len(remainder))
+}
+
+func TestSortSignalValue(t *testing.T) {
+	assert.Equal(t, "bceg", SortSignalValue("gcbe"))
+}
+
+func TestDetermineUnkonwValues(t *testing.T) {
+	data := util.ReadFile("./08_test_input.txt")
+	signals := ParseInput(data)
+	constants, remainder := FindKnownNumbersInLine(signals[1])
+	DetermineUnknownValues(constants, remainder)
+	assert.Equal(t, "bceg", "gcbe")
 }
 
 func TestFindAllConstantsInInput(t *testing.T) {
