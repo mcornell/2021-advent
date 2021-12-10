@@ -3,6 +3,7 @@ package advent09
 import (
 	"2021-advent/util"
 	"fmt"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -17,11 +18,11 @@ func NewGrid(data []string) *Grid {
 		row: len(data),
 		col: len(data[0]),
 	}
-	for _, row := range data {
+	for row_idx, row := range data {
 		cellRow := []Cell{}
-		for _, val := range strings.Split(row, "") {
+		for col_idx, val := range strings.Split(row, "") {
 			height, _ := strconv.Atoi(val)
-			cellRow = append(cellRow, *NewCell(height))
+			cellRow = append(cellRow, *NewCell(height, row_idx, col_idx))
 		}
 		grid.field = append(grid.field, cellRow)
 	}
@@ -30,14 +31,18 @@ func NewGrid(data []string) *Grid {
 }
 
 type Cell struct {
-	height int
-	IsLow  bool
+	height         int
+	IsLow, IsBasin bool
+	row, col       int
 }
 
-func NewCell(height int) *Cell {
+func NewCell(height, row, col int) *Cell {
 	return &Cell{
-		height: height,
-		IsLow:  false,
+		height:  height,
+		IsLow:   false,
+		IsBasin: height < 9,
+		row:     row,
+		col:     col,
 	}
 }
 
@@ -68,23 +73,6 @@ func (grid *Grid) GetNeighbors(row, col int) []Cell {
 		neighbors = append(neighbors, grid.GetCellAt(row, right))
 	}
 
-	// for neighbor_row := -1; neighbor_row <= 1; neighbor_row++ {
-	// 	cell_row := neighbor_row + row
-	// 	if cell_row > -1 && cell_row < grid.row {
-	// 		fmt.Printf("Neighbor Row: %v\n", grid.field[cell_row])
-	// 		// for neighbor_x := -1; neighbor_x <= 1; neighbor_x++ {
-	// 		// 	if neighbor_x == 0 && neighbor_row == 0 {
-	// 		// 		continue
-	// 		// 	}
-	// 		// 	cell_col := neighbor_x + col
-	// 		// 	if cell_col > -1 && cell_col < grid.col {
-	// 		// 		fmt.Printf("Neighbor Found: %d, %d, %v\n", cell_row, cell_col, grid.GetCellAt(cell_col, cell_row))
-	// 		// 		neighbors = append(neighbors, grid.GetCellAt(cell_col, cell_row))
-	// 		// 	}
-
-	// 		// }
-	// 	}
-	// }
 	return neighbors
 }
 
@@ -101,12 +89,86 @@ func (grid *Grid) FindLowPoints() []Cell {
 			min, _ := util.MinMax(height_array)
 			if theCell.height < min {
 				theCell.IsLow = true
-				fmt.Printf("Low Point is: %v at %d, %d\n", theCell, row, col)
+				// fmt.Printf("Low Point is: %v at %d, %d\n", theCell, row, col)
 				lowPoints = append(lowPoints, theCell)
 			}
 		}
 	}
 	return lowPoints
+}
+
+func (grid *Grid) FindBasin(lowPoint Cell) int {
+	// fmt.Printf("Starting at Cell: %v\n", lowPoint)
+	basin_size := 1
+	start_row := lowPoint.row
+	start_col := lowPoint.col
+	// to top
+	// fmt.Printf("Top\n")
+	for row := start_row; row > -1; row-- {
+		if grid.GetCellAt(row, start_col).IsBasin {
+			basin_size++
+		} else {
+			break
+		}
+		// to left
+		// fmt.Println("left")
+		for col := start_col - 1; col > -1; col-- {
+			// fmt.Printf("Checking %d, %d: ", row, col)
+			if grid.GetCellAt(row, col).IsBasin {
+				basin_size++
+				// fmt.Println("Is Basin")
+			} else {
+				// fmt.Println("Is Wall")
+				break
+			}
+		}
+		// to right
+		// fmt.Println("right -> will skip starting point")
+		for col := start_col + 1; col < grid.col; col++ {
+			// fmt.Printf("Checking %d, %d ", row, col)
+			if grid.GetCellAt(row, col).IsBasin {
+				basin_size++
+				// fmt.Println("Is Basin")
+			} else {
+				// fmt.Println("Is Wall")
+				break
+			}
+		}
+	}
+	//to bottom
+	// fmt.Println("bottom")
+	for row := start_row + 1; row < grid.row; row++ {
+		if grid.GetCellAt(row, start_col).IsBasin {
+			basin_size++
+		} else {
+			break
+		}
+		// to left
+		// fmt.Println("left")
+		for col := start_col - 1; col > -1; col-- {
+			// fmt.Printf("Checking %d, %d ", row, col)
+			if grid.GetCellAt(row, col).IsBasin {
+				basin_size++
+				// fmt.Println("Is Basin")
+			} else {
+				// fmt.Println("Is Wall")
+				break
+			}
+		}
+		// to right
+		// fmt.Println("right")
+		for col := start_col + 1; col < grid.col; col++ {
+			// fmt.Printf("Checking %d, %d ", row, col)
+			if grid.GetCellAt(row, col).IsBasin {
+				basin_size++
+				// fmt.Println("Is Basin")
+			} else {
+				// fmt.Println("Is Wall")
+				break
+			}
+		}
+	}
+	return basin_size
 }
 
 func FindTotalRisk(data []string) int {
@@ -117,4 +179,25 @@ func FindTotalRisk(data []string) int {
 		risk += cell.height + 1
 	}
 	return risk
+}
+
+func FindAllBasins(data []string) []int {
+	basinSizes := []int{}
+	grid := NewGrid(data)
+	lowPoints := grid.FindLowPoints()
+	for _, lowPoint := range lowPoints {
+		basinSizes = append(basinSizes, grid.FindBasin(lowPoint))
+	}
+	return basinSizes
+}
+
+func FindTopThreeBasins(data []string) int {
+	basins := FindAllBasins(data)
+	sort.Ints(basins)
+
+	result := basins[len(basins)-1]
+	result *= basins[len(basins)-2]
+	result *= basins[len(basins)-3]
+	fmt.Printf("top 3: %d, %d, %d result: %d\n", basins[len(basins)-1], basins[len(basins)-2], basins[len(basins)-3], result)
+	return result
 }

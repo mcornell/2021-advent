@@ -15,5 +15,5 @@ func RunPuzzle() {
 
 	risk := FindTotalRisk(data)
 	fmt.Printf("Risk: %d\n", risk)
-
+	FindTopThreeBasins(data)
 }
