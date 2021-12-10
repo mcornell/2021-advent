@@ -47,3 +47,12 @@ func MinMax(array []int) (int, int) {
 	}
 	return min, max
 }
+
+func Contains(search []string, it string) bool {
+	for _, a := range search {
+		if it == a {
+			return true
+		}
+	}
+	return false
+}
