@@ -1,6 +1,8 @@
 package advent09
 
 import (
+	"2021-advent/util"
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -91,16 +93,15 @@ func (grid *Grid) FindLowPoints() []Cell {
 	for row := 0; row < len(grid.field); row++ {
 		for col := 0; col < len(grid.field[row]); col++ {
 			neighbors := grid.GetNeighbors(row, col)
-			is_low := true
 			theCell := grid.GetCellAt(row, col)
+			height_array := []int{}
 			for _, neighbor := range neighbors {
-				if neighbor.height < theCell.height {
-					is_low = false
-					break
-				}
+				height_array = append(height_array, neighbor.height)
 			}
-			theCell.IsLow = is_low
-			if theCell.IsLow {
+			min, _ := util.MinMax(height_array)
+			if theCell.height < min {
+				theCell.IsLow = true
+				fmt.Printf("Low Point is: %v at %d, %d\n", theCell, row, col)
 				lowPoints = append(lowPoints, theCell)
 			}
 		}

@@ -9,6 +9,7 @@ import (
 	"2021-advent/advent06"
 	"2021-advent/advent07"
 	"2021-advent/advent08"
+	"2021-advent/advent09"
 	"fmt"
 )
 
@@ -22,4 +23,5 @@ func main() {
 	advent06.RunPuzzle()
 	advent07.RunPuzzle()
 	advent08.RunPuzzle()
+	advent09.RunPuzzle()
 }

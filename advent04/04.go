@@ -1,7 +1,6 @@
 package advent04
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 )
@@ -166,10 +165,10 @@ func FindLoser(game []string) (int, int) {
 	winner := -1
 	for {
 		drawn, numbers, cards = DrawNumber(numbers, cards)
-		fmt.Printf("Drawn: %d\n", drawn)
+		// fmt.Printf("Drawn: %d\n", drawn)
 		winner = FlagWinner(cards)
 		if winner > -1 {
-			fmt.Printf("winner found\n")
+			// fmt.Printf("winner found\n")
 			all_wins := true
 			losers := []int{}
 			for idx, card := range cards {
@@ -178,7 +177,7 @@ func FindLoser(game []string) (int, int) {
 					losers = append(losers, idx)
 				}
 			}
-			fmt.Printf("losers: %v\n", losers)
+			// fmt.Printf("losers: %v\n", losers)
 			if all_wins {
 				break
 			}

@@ -12,7 +12,6 @@ func RunPuzzle() {
 	_, pwd, _, _ := runtime.Caller(0)
 	puzzlePath := filepath.Join(pwd, "..", "08_puzzle.txt")
 	data := util.ReadFile(puzzlePath)
-	fmt.Printf("Lines: %d\n", len(data))
 	signals := ParseInput(data)
 	constants := FindAllConstantsInInput(signals)
 

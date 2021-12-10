@@ -1,7 +1,6 @@
 package advent08
 
 import (
-	"fmt"
 	"sort"
 	"strconv"
 	"strings"
@@ -22,7 +21,6 @@ func NewSignal(pattern_string string, output_string string) *Signal {
 func ParseInput(data []string) []Signal {
 	signals := []Signal{}
 	for _, line := range data {
-		fmt.Println(line)
 		line_split := strings.Split(line, "|")
 		signals = append(signals, *NewSignal(line_split[0], line_split[1]))
 
@@ -65,7 +63,6 @@ func FindKnownNumbersInLine(signal Signal) (map[int]string, []string) {
 		}
 	}
 
-	fmt.Printf("map: %v\n", number_mapping)
 	return number_mapping, unknown
 
 }
@@ -137,7 +134,6 @@ func FindSetDifference(subSet string, superSet string) []string {
 	for _, val := range strings.Split(subSet, "") {
 		subSetMap[val] = true
 	}
-	fmt.Printf("subset Map: %v\n", subSetMap)
 	for _, val := range strings.Split(superSet, "") {
 		if !subSetMap[val] {
 			difference = append(difference, val)
@@ -209,41 +205,34 @@ func DetermineUnknownValues(known map[int]string, unknown []string) map[int]stri
 			six_nine_and_zero = append(six_nine_and_zero, item)
 		}
 	}
-	fmt.Printf("Six nine and zero: %v", six_nine_and_zero)
 
-	top_right, bottom_right, six, nine_or_zero := FindOneCoordinates(one, six_nine_and_zero)
+	top_right, _, six, nine_or_zero := FindOneCoordinates(one, six_nine_and_zero)
 	known[6] = six
 
-	top := FindUnknownItem(known[1], known[7])[0]
-	fmt.Printf("rt: %s rb: %s t: %s, six: %s\n", top_right, bottom_right, top, six)
+	_ = FindUnknownItem(known[1], known[7])[0]
 
 	// 3 contains 1 but 5 and 2 do not.
 	var five_and_two = []string{}
 	known[3], five_and_two = FindThreeValue(one, unknown)
-	fmt.Printf("Three: %s, five and two: %v\n", known[3], five_and_two)
 
 	// Logic 7 is subset of 3. Find the two letters which aren't known.
 
 	middle_and_bottom := FindSetDifference(known[7], known[3])
-	fmt.Printf("middle and bottom: %v\n", middle_and_bottom)
 	// 4 is subset of 1 Find two letters which aren't known
 
 	middle_and_top_left := FindSetDifference(known[1], known[4])
-	fmt.Printf("middle and top_left: %v\n", middle_and_top_left)
-	middle, bottom, top_left := FindIntersectionValue(middle_and_bottom, middle_and_top_left)
-	fmt.Printf("middle %s: bottom: %s top_left: %s \n", middle, bottom, top_left)
+	middle, _, _ := FindIntersectionValue(middle_and_bottom, middle_and_top_left)
 	known[9], known[0] = FindNineAndZero(nine_or_zero, middle)
 
 	known[2], known[5], _ = FindTwoAndFive(five_and_two, top_right)
-	fmt.Printf("Known now: %#v\n", known)
 
 	return known
 }
+
 func FindAllConstantsInInput(signals []Signal) []string {
 	constants := []string{}
 	for _, signal := range signals {
 		constants = append(constants, FindAllConstantsInLine(signal)...)
-		fmt.Println(constants)
 	}
 	return constants
 }
