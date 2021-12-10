@@ -3,6 +3,7 @@ package advent08
 import (
 	"fmt"
 	"sort"
+	"strconv"
 	"strings"
 )
 
@@ -90,15 +91,15 @@ func FindUnknownItem(known string, unknown string) []string {
 	return unknown_values
 }
 
-func FindOneCoordinates(one []string, sixAndNine []string) (string, string, string, string) {
+func FindOneCoordinates(one []string, sixAndNine []string) (string, string, string, []string) {
 	top_right := ""
 	bottom_right := ""
 	six := ""
-	nine := ""
+	nine_or_zero := []string{}
 	for _, num := range sixAndNine {
 		num_slice := strings.Split(num, "")
 		if contains(num_slice, one[0]) && contains(num_slice, one[1]) {
-			nine = num
+			nine_or_zero = append(nine_or_zero, num)
 		} else {
 			six = num
 		}
@@ -110,29 +111,134 @@ func FindOneCoordinates(one []string, sixAndNine []string) (string, string, stri
 		top_right = one[0]
 		bottom_right = one[1]
 	}
-	return top_right, bottom_right, six, nine
+	return top_right, bottom_right, six, nine_or_zero
+}
+
+func FindThreeValue(one []string, unknown []string) (string, []string) {
+	three := ""
+	fiveOrTwo := []string{}
+	for _, val := range unknown {
+
+		if len(val) == 5 {
+			chars := strings.Split(val, "")
+			if contains(chars, one[0]) && contains(chars, one[1]) {
+				three = val
+			} else {
+				fiveOrTwo = append(fiveOrTwo, val)
+			}
+		}
+	}
+	return three, fiveOrTwo
+}
+
+func FindSetDifference(subSet string, superSet string) []string {
+	difference := []string{}
+	subSetMap := make(map[string]bool)
+	for _, val := range strings.Split(subSet, "") {
+		subSetMap[val] = true
+	}
+	fmt.Printf("subset Map: %v\n", subSetMap)
+	for _, val := range strings.Split(superSet, "") {
+		if !subSetMap[val] {
+			difference = append(difference, val)
+		}
+	}
+	return difference
+}
+
+func FindIntersectionValue(left []string, right []string) (string, string, string) {
+	intersection := ""
+	leftoverLeft := ""
+	leftoverRight := ""
+	leftSet := make(map[string]bool)
+	for _, val := range left {
+		leftSet[val] = true
+	}
+	for _, val := range right {
+		if leftSet[val] {
+			intersection = val
+		} else {
+			leftoverRight = val
+		}
+	}
+	delete(leftSet, intersection)
+	for k := range leftSet {
+		leftoverLeft = k
+	}
+
+	return intersection, leftoverLeft, leftoverRight
+}
+
+func FindNineAndZero(nine_or_zero []string, middle string) (string, string) {
+	nine := ""
+	zero := ""
+	for _, val := range nine_or_zero {
+		if contains(strings.Split(val, ""), middle) {
+			nine = val
+		} else {
+			zero = val
+		}
+	}
+
+	return nine, zero
+}
+
+func FindTwoAndFive(five_and_two []string, top_right string) (string, string, string) {
+	two := ""
+	five := ""
+	bottom_left := ""
+	for _, val := range five_and_two {
+		if contains(strings.Split(val, ""), top_right) {
+			two = val
+		} else {
+			five = val
+		}
+	}
+	_, two_rem, _ := FindIntersectionValue(strings.Split(two, ""), strings.Split(five, ""))
+	_, bottom_left, _ = FindIntersectionValue(strings.Split(two_rem, ""), []string{top_right})
+
+	return two, five, bottom_left
+
 }
 
 func DetermineUnknownValues(known map[int]string, unknown []string) map[int]string {
 	one := strings.Split(known[1], "")
-	six_and_nine := []string{}
+	six_nine_and_zero := []string{}
 	for _, item := range unknown {
 		if len(item) == 6 {
-			six_and_nine = append(six_and_nine, item)
+			six_nine_and_zero = append(six_nine_and_zero, item)
 		}
 	}
-	top_right, bottom_right, six, nine := FindOneCoordinates(one, six_and_nine)
+	fmt.Printf("Six nine and zero: %v", six_nine_and_zero)
+
+	top_right, bottom_right, six, nine_or_zero := FindOneCoordinates(one, six_nine_and_zero)
+	known[6] = six
 
 	top := FindUnknownItem(known[1], known[7])[0]
-	// four_items := FindUnknownItem(known[1], known[4])
+	fmt.Printf("rt: %s rb: %s t: %s, six: %s\n", top_right, bottom_right, top, six)
 
-	// left_top := FindUnknownItem(known[1], known[4])[0]
-	// middle := FindUnknownItem(known[1], known[4])[1]
+	// 3 contains 1 but 5 and 2 do not.
+	var five_and_two = []string{}
+	known[3], five_and_two = FindThreeValue(one, unknown)
+	fmt.Printf("Three: %s, five and two: %v\n", known[3], five_and_two)
 
-	fmt.Printf("rt: %s rb: %s t: %s, six: %s, nine: %s\n", top_right, bottom_right, top, six, nine)
+	// Logic 7 is subset of 3. Find the two letters which aren't known.
+
+	middle_and_bottom := FindSetDifference(known[7], known[3])
+	fmt.Printf("middle and bottom: %v\n", middle_and_bottom)
+	// 4 is subset of 1 Find two letters which aren't known
+
+	middle_and_top_left := FindSetDifference(known[1], known[4])
+	fmt.Printf("middle and top_left: %v\n", middle_and_top_left)
+	middle, bottom, top_left := FindIntersectionValue(middle_and_bottom, middle_and_top_left)
+	fmt.Printf("middle %s: bottom: %s top_left: %s \n", middle, bottom, top_left)
+	known[9], known[0] = FindNineAndZero(nine_or_zero, middle)
+
+	known[2], known[5], _ = FindTwoAndFive(five_and_two, top_right)
+	fmt.Printf("Known now: %#v\n", known)
+
 	return known
 }
-
 func FindAllConstantsInInput(signals []Signal) []string {
 	constants := []string{}
 	for _, signal := range signals {
@@ -140,4 +246,31 @@ func FindAllConstantsInInput(signals []Signal) []string {
 		fmt.Println(constants)
 	}
 	return constants
+}
+
+func DecodeOutput(signal Signal) string {
+	constants, remainder := FindKnownNumbersInLine(signal)
+	known := DetermineUnknownValues(constants, remainder)
+	knownByValue := make(map[string]int)
+	for key, value := range known {
+		knownByValue[SortSignalValue(value)] = key
+	}
+	decoded := ""
+	for _, value := range signal.Output {
+		sorted := SortSignalValue(value)
+		decoded += strconv.Itoa(knownByValue[sorted])
+	}
+	return decoded
+
+}
+
+func SumAllOutput(signals []Signal) int {
+	sum := 0
+	for _, signal := range signals {
+		output := DecodeOutput(signal)
+		val, _ := strconv.Atoi(output)
+		sum += val
+
+	}
+	return sum
 }

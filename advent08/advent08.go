@@ -18,4 +18,7 @@ func RunPuzzle() {
 
 	fmt.Printf("Constants: %v\nLen: %d", constants, len(constants))
 
+	sum := SumAllOutput(signals)
+	fmt.Printf("Sum of Output: %d\n", sum)
+
 }

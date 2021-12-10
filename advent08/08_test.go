@@ -46,12 +46,27 @@ func TestSortSignalValue(t *testing.T) {
 	assert.Equal(t, "bceg", SortSignalValue("gcbe"))
 }
 
-func TestDetermineUnkonwValues(t *testing.T) {
+func TestDetermineUnknownValues(t *testing.T) {
 	data := util.ReadFile("./08_test_input.txt")
 	signals := ParseInput(data)
 	constants, remainder := FindKnownNumbersInLine(signals[1])
-	DetermineUnknownValues(constants, remainder)
-	assert.Equal(t, "bceg", "gcbe")
+	known := DetermineUnknownValues(constants, remainder)
+	assert.Equal(t, 10, len(known))
+}
+
+func TestDecodeOutput(t *testing.T) {
+	data := util.ReadFile("./08_test_input.txt")
+	signals := ParseInput(data)
+	output := DecodeOutput(signals[1])
+	assert.Equal(t, 4, len(output))
+	assert.Equal(t, "9781", output)
+}
+
+func TestSumAllOutput(t *testing.T) {
+	data := util.ReadFile("./08_test_input.txt")
+	signals := ParseInput(data)
+	sum := SumAllOutput(signals)
+	assert.Equal(t, 61229, sum)
 }
 
 func TestFindAllConstantsInInput(t *testing.T) {
