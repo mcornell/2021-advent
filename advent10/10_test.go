@@ -23,3 +23,17 @@ func TestFindScore(t *testing.T) {
 	score := FindScore(data)
 	assert.Equal(t, 26397, score)
 }
+
+func TestCompleteIncompleteLine(t *testing.T) {
+	data := util.ReadFile("./10_test_input.txt")
+
+	completed := CompleteIncompleteLine(data[0])
+	assert.Equal(t, "}}]])})]", completed)
+
+}
+
+func TestFindCompletedScore(t *testing.T) {
+	data := util.ReadFile("./10_test_input.txt")
+	score := FindCompletedScore(data)
+	assert.Equal(t, 288957, score)
+}

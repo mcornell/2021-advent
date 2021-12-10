@@ -16,4 +16,6 @@ func RunPuzzle() {
 	score := FindScore(data)
 	fmt.Printf("score: %d\n", score)
 
+	score = FindCompletedScore(data)
+	fmt.Printf("score: %d\n", score)
 }
