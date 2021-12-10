@@ -25,3 +25,17 @@ func TestLoadPuzzle(t *testing.T) {
 	assert.Equal(t, 5, len(grid.field))
 	assert.Equal(t, 10, len(grid.field[0]))
 }
+
+func TestFindLowPoints(t *testing.T) {
+	data := util.ReadFile("./09_test_input.txt")
+	grid := NewGrid(data)
+	lowPoints := grid.FindLowPoints()
+	assert.Equal(t, 4, len(lowPoints))
+
+}
+
+func TestFindTotalRisk(t *testing.T) {
+	data := util.ReadFile("./09_test_input.txt")
+
+	assert.Equal(t, 15, FindTotalRisk(data))
+}

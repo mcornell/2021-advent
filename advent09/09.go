@@ -29,51 +29,91 @@ func NewGrid(data []string) *Grid {
 
 type Cell struct {
 	height int
-	is_low bool
+	IsLow  bool
 }
 
 func NewCell(height int) *Cell {
 	return &Cell{
 		height: height,
-		is_low: false,
+		IsLow:  false,
 	}
 }
 
-func (grid *Grid) GetNeighbors(x, y int) []Cell {
-	neighbors := []Cell{}
-	for neighbor_y := -1; neighbor_y <= 1; neighbor_y++ {
-		cell_y := neighbor_y + y
-		if cell_y > -1 && cell_y < grid.row+1 {
-			for neighbor_x := 1; neighbor_x <= 1; neighbor_x++ {
-				if neighbor_x == 0 && neighbor_y == 0 {
-					continue
-				}
-				cell_x := neighbor_x + x
-				if cell_x > -1 && cell_x < grid.col+1 {
-					neighbors = append(neighbors, grid.field[cell_x][cell_y])
-				}
+func (grid *Grid) GetCellAt(row, col int) Cell {
+	return grid.field[row][col]
+}
 
-			}
-		}
+func (grid *Grid) GetNeighbors(row, col int) []Cell {
+	neighbors := []Cell{}
+	// Check Above
+	above := row - 1
+	if above > -1 {
+		neighbors = append(neighbors, grid.GetCellAt(above, col))
 	}
+	// Check Below
+	below := row + 1
+	if below < grid.row {
+		neighbors = append(neighbors, grid.GetCellAt(below, col))
+	}
+	// Check Left
+	left := col - 1
+	if left > -1 {
+		neighbors = append(neighbors, grid.GetCellAt(row, left))
+	}
+	// Check Right
+	right := col + 1
+	if right < grid.col {
+		neighbors = append(neighbors, grid.GetCellAt(row, right))
+	}
+
+	// for neighbor_row := -1; neighbor_row <= 1; neighbor_row++ {
+	// 	cell_row := neighbor_row + row
+	// 	if cell_row > -1 && cell_row < grid.row {
+	// 		fmt.Printf("Neighbor Row: %v\n", grid.field[cell_row])
+	// 		// for neighbor_x := -1; neighbor_x <= 1; neighbor_x++ {
+	// 		// 	if neighbor_x == 0 && neighbor_row == 0 {
+	// 		// 		continue
+	// 		// 	}
+	// 		// 	cell_col := neighbor_x + col
+	// 		// 	if cell_col > -1 && cell_col < grid.col {
+	// 		// 		fmt.Printf("Neighbor Found: %d, %d, %v\n", cell_row, cell_col, grid.GetCellAt(cell_col, cell_row))
+	// 		// 		neighbors = append(neighbors, grid.GetCellAt(cell_col, cell_row))
+	// 		// 	}
+
+	// 		// }
+	// 	}
+	// }
 	return neighbors
 }
 
 func (grid *Grid) FindLowPoints() []Cell {
 	lowPoints := []Cell{}
-	for y := 0; y < len(grid.field); y++ {
-		for x := 0; x < len(grid.field[y]); x++ {
-			neighbors := grid.GetNeighbors(x, y)
+	for row := 0; row < len(grid.field); row++ {
+		for col := 0; col < len(grid.field[row]); col++ {
+			neighbors := grid.GetNeighbors(row, col)
 			is_low := true
+			theCell := grid.GetCellAt(row, col)
 			for _, neighbor := range neighbors {
-				if neighbor.height < grid.field[x][y].height {
+				if neighbor.height < theCell.height {
 					is_low = false
 					break
 				}
 			}
-			grid.field[x][y].is_low = is_low
-			lowPoints = append(lowPoints, grid.field[x][y])
+			theCell.IsLow = is_low
+			if theCell.IsLow {
+				lowPoints = append(lowPoints, theCell)
+			}
 		}
 	}
 	return lowPoints
+}
+
+func FindTotalRisk(data []string) int {
+	grid := NewGrid(data)
+	lowPoints := grid.FindLowPoints()
+	risk := 0
+	for _, cell := range lowPoints {
+		risk += cell.height + 1
+	}
+	return risk
 }
