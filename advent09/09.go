@@ -31,19 +31,23 @@ func NewGrid(data []string) *Grid {
 }
 
 type Cell struct {
-	height         int
-	IsLow, IsBasin bool
-	row, col       int
+	height, row, col             int
+	IsLow, IsBasin, BasinChecked bool
 }
 
 func NewCell(height, row, col int) *Cell {
 	return &Cell{
-		height:  height,
-		IsLow:   false,
-		IsBasin: height < 9,
-		row:     row,
-		col:     col,
+		row:          row,
+		col:          col,
+		height:       height,
+		IsLow:        false,
+		IsBasin:      height < 9,
+		BasinChecked: false,
 	}
+}
+
+func (cell *Cell) Format() string {
+	return fmt.Sprintf("Cell At: %d, %d Height: %d, BasinChecked: %t", cell.row, cell.col, cell.height, cell.BasinChecked)
 }
 
 func (grid *Grid) GetCellAt(row, col int) Cell {
@@ -97,80 +101,6 @@ func (grid *Grid) FindLowPoints() []Cell {
 	return lowPoints
 }
 
-func (grid *Grid) FindBasin(lowPoint Cell) int {
-	// fmt.Printf("Starting at Cell: %v\n", lowPoint)
-	basin_size := 1
-	start_row := lowPoint.row
-	start_col := lowPoint.col
-	// to top
-	// fmt.Printf("Top\n")
-	for row := start_row; row > -1; row-- {
-		if grid.GetCellAt(row, start_col).IsBasin {
-			basin_size++
-		} else {
-			break
-		}
-		// to left
-		// fmt.Println("left")
-		for col := start_col - 1; col > -1; col-- {
-			// fmt.Printf("Checking %d, %d: ", row, col)
-			if grid.GetCellAt(row, col).IsBasin {
-				basin_size++
-				// fmt.Println("Is Basin")
-			} else {
-				// fmt.Println("Is Wall")
-				break
-			}
-		}
-		// to right
-		// fmt.Println("right -> will skip starting point")
-		for col := start_col + 1; col < grid.col; col++ {
-			// fmt.Printf("Checking %d, %d ", row, col)
-			if grid.GetCellAt(row, col).IsBasin {
-				basin_size++
-				// fmt.Println("Is Basin")
-			} else {
-				// fmt.Println("Is Wall")
-				break
-			}
-		}
-	}
-	//to bottom
-	// fmt.Println("bottom")
-	for row := start_row + 1; row < grid.row; row++ {
-		if grid.GetCellAt(row, start_col).IsBasin {
-			basin_size++
-		} else {
-			break
-		}
-		// to left
-		// fmt.Println("left")
-		for col := start_col - 1; col > -1; col-- {
-			// fmt.Printf("Checking %d, %d ", row, col)
-			if grid.GetCellAt(row, col).IsBasin {
-				basin_size++
-				// fmt.Println("Is Basin")
-			} else {
-				// fmt.Println("Is Wall")
-				break
-			}
-		}
-		// to right
-		// fmt.Println("right")
-		for col := start_col + 1; col < grid.col; col++ {
-			// fmt.Printf("Checking %d, %d ", row, col)
-			if grid.GetCellAt(row, col).IsBasin {
-				basin_size++
-				// fmt.Println("Is Basin")
-			} else {
-				// fmt.Println("Is Wall")
-				break
-			}
-		}
-	}
-	return basin_size
-}
-
 func FindTotalRisk(data []string) int {
 	grid := NewGrid(data)
 	lowPoints := grid.FindLowPoints()
@@ -181,12 +111,28 @@ func FindTotalRisk(data []string) int {
 	return risk
 }
 
+func FindBasin(cell Cell, grid *Grid) int {
+	basin_size := 0
+	if cell.IsBasin && !cell.BasinChecked {
+		basin_size = 1
+		grid.field[cell.row][cell.col].BasinChecked = true
+		neighbors := grid.GetNeighbors(cell.row, cell.col)
+		for _, neighbor := range neighbors {
+			updated_neighbor := grid.GetCellAt(neighbor.row, neighbor.col)
+			if !updated_neighbor.BasinChecked {
+				basin_size += FindBasin(updated_neighbor, grid)
+			}
+		}
+	}
+	return basin_size
+}
+
 func FindAllBasins(data []string) []int {
 	basinSizes := []int{}
 	grid := NewGrid(data)
 	lowPoints := grid.FindLowPoints()
 	for _, lowPoint := range lowPoints {
-		basinSizes = append(basinSizes, grid.FindBasin(lowPoint))
+		basinSizes = append(basinSizes, FindBasin(lowPoint, grid))
 	}
 	return basinSizes
 }
