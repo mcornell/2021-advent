@@ -27,7 +27,6 @@ func TestSetupState(t *testing.T) {
 	initial_state := util.ReadFile("./06_test_input.txt")
 	fish := SetupState(initial_state[0])
 	assert.Equal(t, 4, len(fish))
-	assert.Equal(t, 1, fish[2].Timer)
 }
 
 func TestIncrementDay(t *testing.T) {
@@ -35,10 +34,8 @@ func TestIncrementDay(t *testing.T) {
 	fish := SetupState(initial_state[0])
 	fish = IncrementDay(fish)
 	assert.Equal(t, 4, len(fish))
-	assert.Equal(t, 0, fish[2].Timer)
 	fish = IncrementDay(fish)
 	assert.Equal(t, 5, len(fish))
-	assert.Equal(t, 0, fish[3].Timer)
 	assert.Equal(t, 8, fish[4].Timer)
 	fish = IncrementDay(fish)
 	fish = IncrementDay(fish)

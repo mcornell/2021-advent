@@ -46,7 +46,7 @@ func NewCell(height, row, col int) *Cell {
 	}
 }
 
-func (cell *Cell) Format() string {
+func (cell *Cell) String() string {
 	return fmt.Sprintf("Cell At: %d, %d Height: %d, BasinChecked: %t", cell.row, cell.col, cell.height, cell.BasinChecked)
 }
 

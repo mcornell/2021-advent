@@ -37,8 +37,8 @@ func TestFindKnownNumbersInLine(t *testing.T) {
 	data := util.ReadFile("./08_test_input.txt")
 	signals := ParseInput(data)
 	constants, remainder := FindKnownNumbersInLine(signals[1])
-	assert.Equal(t, "bceg", constants[4])
-	assert.Equal(t, "abcdefg", constants[8])
+	assert.Equal(t, "gfec", constants[4])
+	assert.Equal(t, "gcadebf", constants[8])
 	assert.Equal(t, 6, len(remainder))
 }
 
