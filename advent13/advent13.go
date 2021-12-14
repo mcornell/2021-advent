@@ -17,4 +17,8 @@ func RunPuzzle() {
 	paper.Fold()
 
 	fmt.Printf("dot Count: %d\n", len(paper.Dots))
+	for len(paper.Instructions) > 0 {
+		paper.Fold()
+	}
+	fmt.Printf("Message: %v\n", paper)
 }

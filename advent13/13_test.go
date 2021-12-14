@@ -26,6 +26,10 @@ func TestFold(t *testing.T) {
 	paper.Fold()
 	fmt.Println(paper)
 	assert.Equal(t, 1, len(paper.Instructions))
-	assert.Equal(t, 28, len(paper.Dots))
+	assert.Equal(t, 17, len(paper.Dots))
+	paper.Fold()
+	fmt.Println(paper)
+	assert.Equal(t, 0, len(paper.Instructions))
+	assert.Equal(t, 16, len(paper.Dots))
 
 }

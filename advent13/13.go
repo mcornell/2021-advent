@@ -132,17 +132,27 @@ func (p *Paper) Fold() string {
 			for col_idx, val := range p.grid[fold] {
 				if val {
 					p.grid[y][col_idx] = true
-					dot := Dot{
-						x: col_idx,
-						y: y,
-					}
-					p.Dots = append(p.Dots, dot)
 				}
 			}
 		}
 		p.grid = p.grid[:len(p.grid)-index-1]
+		var new_dots = []Dot{}
+
+		for row_idx, row := range p.grid {
+			for col_idx := range row {
+				if p.grid[row_idx][col_idx] {
+					dot := Dot{
+						x: col_idx,
+						y: row_idx,
+					}
+					new_dots = append(new_dots, dot)
+				}
+			}
+		}
+
+		p.Dots = new_dots
 	}
-	// fmt.Println(p)
+
 	p.Instructions = p.Instructions[1:]
 	return instruction.String()
 }
