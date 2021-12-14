@@ -13,6 +13,7 @@ import (
 	"2021-advent/advent10"
 	"2021-advent/advent11"
 	"2021-advent/advent13"
+	"2021-advent/advent14"
 	"fmt"
 )
 
@@ -31,4 +32,5 @@ func main() {
 	advent11.RunPuzzle()
 
 	advent13.RunPuzzle()
+	advent14.RunPuzzle()
 }

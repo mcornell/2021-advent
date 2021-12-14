@@ -97,7 +97,7 @@ func (p *Paper) Fold() string {
 	instruction := p.Instructions[0]
 	index := instruction.index
 	if instruction.fold_x {
-		fmt.Println(instruction)
+
 		for fold, x := index+1, index-1; x > -1; fold, x = fold+1, x-1 {
 
 			for row_idx := range p.grid {
